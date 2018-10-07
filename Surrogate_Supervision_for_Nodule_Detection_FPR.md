@@ -70,7 +70,7 @@ The model was trained from scratch, pretrained from the discriminator of the sur
 
 
 ## Results
-![FPR result](./FPR_result2.png)
+![FPR result](./FPR_result3.png)
 
 The performances of FPR models trained from scratch and pretrained from the discriminator of the surrogate supervision GAN model are shown above. These performances are measured in terms of FROC AuC (up to 3 false positives).
 The x axis is the percentage of training data used for FPR model.

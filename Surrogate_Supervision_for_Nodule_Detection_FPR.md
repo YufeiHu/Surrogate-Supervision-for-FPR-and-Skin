@@ -9,7 +9,7 @@ The task of FPR for nodule detection is to label each nodule candidate (3D patch
 A 3D faster RCNN model is used to generate 3D candidates extracted from all these 1,018 CT series.
 These candidates are combined with the ground truth 3D patches provided by LIDC.
 The false positive 3D patches provided by LUNA16 challenge [2] are further used to only augment our training dataset for FPR model.
-Finally, there are 784,241 3D patches (3,097 of them are nodules) used for training (*T<sup>l</sup>*), 4,750 (830 of them are nodules) used for validation, and 3,059 (~500 of them are nodules) used for testing.
+Finally, there are 784,241 3D patches (3,097 of them are nodules) used for training (*Tr<sup>l</sup>*), 4,750 (830 of them are nodules) used for validation (*V<sup>l</sup>*), and 3,059 (~500 of them are nodules) used for testing (*Te<sup>l</sup>*).
 
 For preprocessing, all 3D patches are clipped from -1200 to 600 in Hounsfield unit.
 Their values are then normalized into the range of -1 to 1.
@@ -22,7 +22,7 @@ To alleviate the class-imbalance problem, the ratio between non-nodule patches a
 (3) if the nodule diameter is between 25mm and 50mm, we directly feed it into the model without upsampling.
 
 ### 2. Surrogate Supervision GAN:
-For surrogate supervision task, the GAN model is trained using both the 784,241 FPR training patches and the 4,750 FPR validation patches. It is then tested on the 3,059 FPR testing patches.
+For surrogate supervision task, the GAN model is trained using both the 784,241 FPR training patches (*Tr<sup>l</sup>*) and the 4,750 FPR validation patches (*V<sup>l</sup>*). It is then tested on the 3,059 FPR testing patches (*Te<sup>l</sup>*).
 The preprocessing and upsampling follows the same methods adopted by FPR model.
 
 
@@ -66,7 +66,7 @@ Batch size is 128. Total number of training iterations is 196,000.
 An SGD optimizer was used for configuring the learning rate.
 The learning rate started at 3e-4, then decreased by 10 times at training step of 120,000.
 
-The model was trained from scratch, pretrained from the discriminator of the surrogate supervision GAN model using 10%, 25%, 50%, and 100% of all the 784,241 3D training patches. There has been altogether 8 FPR models been trained.
+The model was trained from scratch, pretrained from the discriminator of the surrogate supervision GAN model using 10%, 25%, 50%, and 100% of all the 784,241 3D training patches (*Tr<sup>l</sup>*). There has been altogether 8 FPR models been trained.
 
 
 ## Results

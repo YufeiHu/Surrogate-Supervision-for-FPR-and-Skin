@@ -15,7 +15,7 @@ Their values are then normalized into the range of -1 to 1.
 All 3D patches are resampled to the spacing of 1mm x 1mm x 1mm.
 Finally they are center cropped to the shape of 32 x 32 x 32 along z, y, and x axis.
 
-To alleviate the class-unbalancing problem, the ratio between non-nodule patches and nodule patches are kept to 8:1 when feeding the data to the FPR model during training.
+To alleviate the class-imbalance problem, the ratio between non-nodule patches and nodule patches are kept to 8:1 when feeding the data to the FPR model during training.
 To every nodule 3D patch, we upsample it by using the following rule: (1) if the diameter of the nodule is smaller than 3mm, we abandon it;
 (2) if the nodule diameter is between 3mm and 25mm, we upsample it by 2 times;
 (3) if the nodule diameter is between 25mm and 50mm, we directly feed it into the model without upsampling.

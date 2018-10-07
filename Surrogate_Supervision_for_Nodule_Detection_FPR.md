@@ -27,7 +27,7 @@ The preprocessing and upsampling follows the same methods adopted by FPR model.
 ## Architectures
 
 ### 1. GAN:
-![GAN Architecture](./FPR_GAN.png)
+![GAN Architecture](./FPR_GAN2.png)
 
 This GAN model follows the same training and inference procedures as proposed in the original GAN paper [3]. Once trained, alpha1, alpha2, alpha3, alpha4 will all become 1 and the discriminator network will reduce to the FPR network as shown in the figure below.
 

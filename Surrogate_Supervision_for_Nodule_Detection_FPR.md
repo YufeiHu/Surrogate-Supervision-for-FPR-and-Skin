@@ -6,49 +6,44 @@
 ### 1. FPR:
 The task of FPR for nodule detection is to label each nodule candidate (3D patch) as either nodule or non-nodule.
 733, 95, and 190 CT series from LIDC dataset [1] were used for training, validation, and testing respectively.
-A 3D faster RCNN model is then used to generate 3D candidates extracted from all these 1,018 CT series.
-These candidates are then combined with the false positive and ground truth 3D patches provided by LUNA16 challenge [2] to serve as training, validation, and testing data for FPR model.
-Finally, there are 784,241 3D patches used for training, 4,750 used for validation, and 3,059 used for testing.
+A 3D faster RCNN model is used to generate 3D candidates extracted from all these 1,018 CT series.
+These candidates are combined with the ground truth 3D patches provided by LIDC.
+The false positive 3D patches provided by LUNA16 challenge [2] are further used to only augment our training dataset for FPR model.
+Finally, there are 784,241 3D patches (3,097 of them are nodules) used for training, 4,750 (830 of them are nodules) used for validation, and 3,059 (~500 of them are nodules) used for testing.
 
 For preprocessing, all 3D patches are clipped from -1200 to 600 in Hounsfield unit.
 Their values are then normalized into the range of -1 to 1.
 All 3D patches are resampled to the spacing of 1mm x 1mm x 1mm.
 Finally they are center cropped to the shape of 32 x 32 x 32 along z, y, and x axis.
 
-To alleviate the class-imbalance problem, the ratio between non-nodule patches and nodule patches are kept to 8:1 by random down sampling of non-nodule patches. We further re-sample the nodule patches as follows: (1) if the diameter of the nodule is smaller than 3mm, we remove it;
+To alleviate the class-imbalance problem, the ratio between non-nodule patches and nodule patches are kept to 8:1 by random down sampling of non-nodule patches. We further re-sample the nodule patches as follows:
+(1) if the diameter of the nodule is smaller than 3mm, we remove it;
 (2) if the nodule diameter is between 3mm and 25mm, we upsample it by 2 times;
 (3) if the nodule diameter is between 25mm and 50mm, we directly feed it into the model without upsampling.
 
-### 2. GAN:
+### 2. Surrogate Supervision GAN:
 For surrogate supervision task, the GAN model is trained using both the 784,241 FPR training patches and the 4,750 FPR validation patches. It is then tested on the 3,059 FPR testing patches.
 The preprocessing and upsampling follows the same methods adopted by FPR model.
 
 
 ## Architectures
 
-### 1. GAN:
+### 1. Surrogate Supervision GAN:
 ![GAN Architecture](./FPR_GAN3.png)
 
-This GAN model follows the same training and inference procedures as proposed in the original GAN paper [3]. Once trained, alpha1, alpha2, alpha3, alpha4 will all become 1 and the discriminator network will reduce to the FPR network as shown in the figure below.
+This surrogate supervision GAN model follows the same training and inference procedures as proposed in the original GAN paper [3]. Once trained, alpha1, alpha2, alpha3, alpha4 will all become 1 and the discriminator network will reduce to the FPR network as shown in the figure below.
 
 ### 2. FPR:
 ![FPR Architecture](./FPR2.png)
 
 
 ## Training Details
-Both FPR and GAN were implemented using Tensorflow [4].
+Both FPR and surrogate supervision GAN were implemented using Tensorflow [4].
 They were both trained on an NVIDIA 1080Ti GPU.
 
-### 1. FPR:
-Batch size is 128. Total number of training iterations is 196,000.
-An SGD optimizer was used for configuring the learning rate.
-The learning rate started at 3e-4, then decreased by 10 times at training step of 120,000.
-
-The model was trained from scratch, pretrained from the discriminator of the surrogate supervision GAN model using 10%, 25%, 50%, and 100% of all the 784,241 3D training patches. There has been altogether 8 FPR models been trained.
-
-### 2. GAN:
+### 1. Surrogate Supervision GAN:
 Batch size is 64. Total number of training iterations is 96,000.
-Wasserstein loss [6] was selected because of its stability.
+Wasserstein loss [6] was used because of its stability.
 The dimension of the latent variables is 100.
 An Adam optimizer was used for configuring the learning rate with beta1 of 0.5 and beta2 of 0.99.
 The learning rate started at 2e-4. 
@@ -66,12 +61,18 @@ after 12,000 training steps, alpha2 was turned on;
 after 19,000 training steps, alpha3 was turned on;
 and after 26,000 training steps, alpha4 was turned on.
 
+### 2. FPR:
+Batch size is 128. Total number of training iterations is 196,000.
+An SGD optimizer was used for configuring the learning rate.
+The learning rate started at 3e-4, then decreased by 10 times at training step of 120,000.
+
+The model was trained from scratch, pretrained from the discriminator of the surrogate supervision GAN model using 10%, 25%, 50%, and 100% of all the 784,241 3D training patches. There has been altogether 8 FPR models been trained.
+
 
 ## Results
-![FPR result](./FPR_result.png)
+![FPR result](./FPR_result2.png)
 
-The performances of FPR models trained from scratch and pretrained from the discriminator of the surrogate supervision GAN model are shown above.
-These performances are measured in terms of FROC AuC (up to different false positives) and CPM scores.
+The performances of FPR models trained from scratch and pretrained from the discriminator of the surrogate supervision GAN model are shown above. These performances are measured in terms of FROC AuC (up to 3 false positives).
 The x axis is the percentage of training data used for FPR model.
 
 

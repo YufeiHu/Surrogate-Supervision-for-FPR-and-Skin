@@ -5,13 +5,9 @@
 
 ### 1. FPR:
 The task of FPR for nodule detection is to label each nodule candidate (3D patch) as either nodule or non-nodule.
-733, 95, and 190 CT series from LIDC dataset [1] were used for training, validation, and testing respectively.
-A 3D faster RCNN model is used to generate 3D candidates extracted from all these 1,018 CT series.
-These candidates are combined with the ground truth 3D patches provided by LIDC.
-The false positive 3D patches provided by LUNA16 challenge [2] are further used to only augment our training dataset for FPR model.
-Finally, there are 784,241 3D patches (3,097 of them are nodules) used for training (*Tr<sup>l</sup>*), 4,750 (830 of them are nodules) used for validation (*V<sup>l</sup>*), and 3,059 (~500 of them are nodules) used for testing (*Te<sup>l</sup>*).
+We first split the LIDC dataset[1] into the training, validation, and test subsets with 733, 95, and 190 CT series, respectively. To generate nodule candidates, we trained a 3D faster RCNN model using the training subset. We then ran this model against all 1,018 CT series from LIDC. The resulting candidate locations were combined with the ground truth locations provided by LIDC. Finally, we grouped these TP, GT, and FP locations according to series UIDs for training, validation, and testing purposes.
 
-For preprocessing, all 3D patches are clipped from -1200 to 600 in Hounsfield unit.
+For preprocessing, 3D patches are clipped from -1200 to 600 in Hounsfield unit.
 Their values are then normalized into the range of -1 to 1.
 All 3D patches are resampled to the spacing of 1mm x 1mm x 1mm.
 Finally they are center cropped to the shape of 32 x 32 x 32 along z, y, and x axis.

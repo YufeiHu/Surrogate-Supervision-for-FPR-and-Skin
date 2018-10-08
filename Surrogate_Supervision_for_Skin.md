@@ -25,23 +25,21 @@ Each grayscale image is repeated 3 times along the depth to make its dimension s
 
 ## Architectures
 
-### 1. Skin Segmentation:
-![Skin Segmentation Architecture](./resnet50_DeepLabV3Plus.png)
+### 1. Surrogate Supervision Colorization:
+![Colorization Architecture](./skin_GAN.png)
 
-The skin segmentation model follows the DeepLabV3+ framework [1].
-The backbone is the ResNet 50 beta network with all details listed clearly at [DeepLabV3+ Github Home Page](https://github.com/tensorflow/models/tree/master/research/deeplab).
+This condtional GAN model follows the same training and inference procedures as proposed in the original cGAN paper [2].
 
-
-### 2. Skin Colorization:
-![cGAN Architecture](./discriminator_skin.png)
-
-Only the architecture of the discriminator is shown here since
-the architecture of the generator is the same to that of the skin segmentation model except a different output dimension for the very last fully connected layer.
-The input for the discriminator is the concatenation of the real/fake RGB image and grayscale image.
+The input for the discriminator network is the concatenation of the real/fake RGB image and grayscale image.
 Because the fake RGB image has a dimension of 129 x 129 x 3,
 the corresponding real image and grayscale image are also downscaled to 129 x 129 x 3.
 Therefore, the final input dimension for the discriminator is 129 x 129 x 6.
-This condtional GAN model follows the same training and inference procedures as proposed in the original cGAN paper [2].
+
+The generator network follows the DeepLabV3+ framework [1].
+The backbone is the ResNet 50 beta network with all details listed clearly at [DeepLabV3+ Github Home Page](https://github.com/tensorflow/models/tree/master/research/deeplab).
+
+### 2. Skin Segmentation:
+The skin segmentation model is exactly the same to the generator network of the surrogate supervision colorization model except a different output dimension for the very last convolution layer shown in the figure above. The output dimension of this convolution layer needs to be changed to 9.
 
 
 ## Training Details

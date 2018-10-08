@@ -8,15 +8,14 @@ The private dataset we used contains over 330,000 RGB tele-medicine images taken
 We have manually labeled the segmentation masks for 1,692 images.
 
 ### 1. Skin Segmentation:
-Among the 1,692 labeled images, 1,435 images are used for training, 100 are used for validation, and 163 are used for testing.
+Among the 1,692 labeled images, 1,435 images are used for training (*Tr<sup>l</sup>*), 100 are used for validation (*V<sup>l</sup>*), and 163 are used for testing (*Te<sup>l</sup>*).
 
 For preprocessing, all images are cropped into 513 x 513 with their center randomly positioned inside the original feasible area.
 A padding value of 255 for all RGB channels are filled to deal with undefined regions.
 The pixel values are then normalized into the range of -1 to 1 for all RGB channels.
 
 ### 2. Skin Colorization:
-The model was trained using the 1,435 segmentation training images, 100 segmentation validation images, 
-and the remaining unlabeled ~330,000 images. The model is tested on the 163 segmentation testing data.
+The model was trained using the 1,435 segmentation training images (*Tr<sup>l</sup>*), 100 segmentation validation images (*V<sup>l</sup>*), and the remaining unlabeled ~330,000 images (*D<sup>u</sup>*). The model is tested on the 163 segmentation testing data (*Te<sup>l</sup>*).
 
 The preprocessing follows the same method adopted by skin segmentation model.
 All images are also converted into grayscale images.
@@ -46,21 +45,21 @@ The skin segmentation model is exactly the same to the generator network of the 
 Both skin segmetation and colorization models were implemented using Tensorflow [3].
 They were both trained on an NVIDIA 1080Ti GPU.
 
-### 1. Skin Segmentation:
-Batch size is 4. Total number of training iterations is 300,000.
-An Adam optimizer was used for configuring the learning rate with beta1 of 0.5 and beta2 of 0.999.
-The learning rate started at 1e-4. Atrous rate is 6, 12, 18.
-The output stride for the resnet50-DeepLabV3+ is 16 and decoder output stride is 4.
-
-The model was trained from scratch, pretrained from the generator of the skin colorization model, and pretrained from ImageNet using 10%, 25%, 50%, and 100% of all the 1,435 training images. There has been altogether 12 skin segmentation models been trained.
-
-### 2. Skin Colorization:
+### 1. Skin Colorization:
 Batch size is 4. Total number of training iterations is 76,000.
 LS GAN loss [4] was selected. 
 An Adam optimizer was used for configuring the learning rate with beta1 of 0.5 and beta2 of 0.999.
 The learning rate started at 2e-4. 
 The constant in the generator loss function is set to be 1, meaning that the ratio between the 
-generator GAN loss and generator reconstruction loss is set to be 1.
+generator LS GAN loss and generator reconstruction loss is set to be 1.
+
+### 2. Skin Segmentation:
+Batch size is 4. Total number of training iterations is 300,000.
+An Adam optimizer was used for configuring the learning rate with beta1 of 0.5 and beta2 of 0.999.
+The learning rate started at 1e-4. Atrous rate is 6, 12, 18.
+The output stride for the resnet50-DeepLabV3+ is 16 and decoder output stride is 4.
+
+The model was trained from scratch, pretrained from the generator of the skin colorization model, and pretrained from ImageNet using 10%, 25%, 50%, and 100% of all the 1,435 training images (*Tr<sup>l</sup>*). There has been altogether 3 x 4 = 12 skin segmentation models been trained.
 
 
 ## Results

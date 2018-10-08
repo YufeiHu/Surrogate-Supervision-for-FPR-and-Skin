@@ -24,7 +24,7 @@ Each grayscale image is repeated 3 times along the depth to make its dimension s
 
 ## Architectures
 
-### 1. Surrogate Supervision Colorization:
+### 1. Surrogate Supervision Skin Colorization:
 ![Colorization Architecture](./skin_GAN.png)
 
 This condtional GAN model follows the same training and inference procedures as proposed in the original cGAN paper [2].
